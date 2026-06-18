@@ -17,7 +17,4 @@ WORKDIR /app
 
 COPY . .
 
-RUN groupadd -r appuser && useradd -r -g appuser -G appuser -m -d /app -s /bin/sh -c "Docker appuser" appuser
-USER appuser
-
 CMD python3 app.py
