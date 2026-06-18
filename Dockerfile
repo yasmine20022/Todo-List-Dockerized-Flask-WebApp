@@ -1,27 +1,23 @@
-# build the image based on python:3.8-slim-buster image
-FROM python:3.8-slim-buster
+FROM python:3.9-slim-bullseye
 
-# metadata in the form of key=value about the maintainer of the image
-LABEL Maintainer_Name="Ahmed Ayman" Maintainer_Email="a.ayman6000@gmail.com" 
+LABEL Maintainer_Name="Ahmed Ayman" Maintainer_Email="a.ayman6000@gmail.com"
 
-# the work directory inside the container
 WORKDIR /
 
-# set enviournment variables 
 ENV FLASK_APP app.py
 ENV FLASK_ENV development
 
-# copy the requirements file inside the container
 COPY ./requirements.txt /requirements.txt
 
-# install the requirements using pip3
-RUN pip3 install -r requirements.txt
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential && rm -rf /var/lib/apt/lists/*
+RUN pip3 install --no-cache-dir -r requirements.txt
 
 RUN mkdir app
 WORKDIR /app
 
-# copy the project artefects into the container under the root directory
 COPY . .
 
-# the command to run once we run the container 
+RUN groupadd -r appuser && useradd -r -g appuser -G appuser -m -d /app -s /bin/sh -c "Docker appuser" appuser
+USER appuser
+
 CMD python3 app.py
