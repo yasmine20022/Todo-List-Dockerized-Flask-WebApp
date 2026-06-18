@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: todo-list-dockerized-flask-webapp
+  labels:
+    app: todo-list-dockerized-flask-webapp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: todo-list-dockerized-flask-webapp
+  template:
+    metadata:
+      labels:
+        app: todo-list-dockerized-flask-webapp
+    spec:
+      containers:
+      - name: todo-list-dockerized-flask-webapp
+        image: todo-list-dockerized-flask-webapp:latest
+        imagePullPolicy: Never
+        ports:
+        - containerPort: 5000
+        resources:
+          requests:
+            memory: 128Mi
+            cpu: 100m
+          limits:
+            memory: 256Mi
+            cpu: 500m
+        readinessProbe:
+          httpGet: &id001
+            path: /
+            port: 5000
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 15
+        livenessProbe:
+          httpGet: *id001
+          periodSeconds: 10
+          failureThreshold: 3
+          initialDelaySeconds: 30
